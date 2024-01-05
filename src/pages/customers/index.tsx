@@ -1,27 +1,27 @@
 import { NextPage, GetStaticProps, InferGetStaticPropsType } from "next";
+import axios from "axios";
 
-type Customer = {
+export type Customer = {
   id: number;
   name: string;
   industry: string;
 };
 
+type GetCustomerResponse = {
+  customers: Customer[];
+};
+
 export const getStaticProps: GetStaticProps = async (context) => {
+  const result = await axios.get<GetCustomerResponse>(
+    "http://127.0.0.1:8000/api/customers/"
+  );
+  console.log(result);
+
   return {
     props: {
-      customers: [
-        {
-          id: 1,
-          name: "Microsoft",
-          industry: "Tech",
-        },
-        {
-          id: 2,
-          name: "Land Rover",
-          industry: "Automotive",
-        },
-      ] as Customer[],
+      customers: result.data.customers,
     },
+    revalidate: 60,
   };
 };
 
