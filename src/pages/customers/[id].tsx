@@ -6,6 +6,7 @@ import { ParsedUrlQuery } from "querystring";
 import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 import { BSONTypeError } from "bson";
+import { getCustomer } from "../api/customers/[id]";
 
 type Props = {
   customer?: Customer;
@@ -33,16 +34,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<Props, Params> = async (
   context
 ) => {
-  const params = context.params;
+  // ! : of there is no id given the user will go to the index page
+  const params = context.params!;
 
   // check if data found
   try {
-    const mongoClient = await clientPromise;
-
-    const data = (await mongoClient
-      .db()
-      .collection("customers")
-      .findOne({ _id: new ObjectId(params?.id) })) as Customer;
+    const data = await getCustomer(params.id);
 
     console.log("$$$$$$$$$$$$$$$$$$$$$!!!!!!!!!!!!!!", data);
 
