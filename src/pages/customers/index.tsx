@@ -3,6 +3,8 @@ import axios from "axios";
 import { MongoClient, ObjectId } from "mongodb";
 import clientPromise from "../../../lib/mongodb";
 import { getCustomers } from "../api/customers";
+import { useQuery } from "@tanstack/react-query";
+import Button from "@mui/material/Button";
 
 export type Customer = {
   _id?: ObjectId;
@@ -16,8 +18,6 @@ type GetCustomerResponse = {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const data = await getCustomers();
-
-  console.log("$$$$$$$!!!!!!!!", data);
 
   // const result = await axios.get<GetCustomerResponse>(
   //   "http://127.0.0.1:8000/api/customers/"
@@ -33,9 +33,23 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 const Customers: NextPage = ({
-  customers,
+  customers: customersFromProps,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  console.log(customers);
+  //react-query
+  // const query = useQuery({, {}  deconstructing => data.data.customers
+  const {
+    data: {
+      data: { customers },
+    },
+  } = useQuery({
+    queryKey: ["customers"],
+    queryFn: () => {
+      return axios("/api/customers") as any;
+    },
+    //get initial data from getStaticProps
+    initialData: { data: { customers: customersFromProps } },
+  });
+
   return (
     <>
       <h1>Customers</h1>
@@ -46,6 +60,7 @@ const Customers: NextPage = ({
 
             <p>{customer.name}</p>
             <p>{customer.industry}</p>
+            <Button variant="outlined">View Orders</Button>
           </div>
         );
       })}

@@ -6,6 +6,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "../../../../lib/mongodb";
 import { Customer } from "@/pages/customers";
 import { ObjectId } from "mongodb";
+import NextCors from "nextjs-cors";
 
 type ReturnCustomers = {
   customers: Customer[];
@@ -40,7 +41,12 @@ const handler = async (
   req: NextApiRequest,
   res: NextApiResponse<ReturnCustomers | ObjectId | { error: string }>
 ) => {
-  //
+  await NextCors(req, res, {
+    methods: ["GET", "POST"],
+    origin: ["http://localhost:5173"],
+    optionsSuccessStatus: 200,
+  });
+  // will be used by react-query to ensure data is up to date
   if (req.method === "GET") {
     const data = await getCustomers();
 
