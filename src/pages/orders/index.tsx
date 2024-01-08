@@ -47,7 +47,7 @@ type Props = {
   orders: Order[];
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
   const data = await getCustomers();
 
   let orders: OrderRow[] = [];
@@ -80,7 +80,6 @@ export const getStaticProps: GetStaticProps = async () => {
       //     return order !== null;
       //   }),
     },
-    revalidate: 60,
   };
 };
 
