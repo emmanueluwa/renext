@@ -5,6 +5,7 @@ import Info from "@mui/icons-material/Info";
 import PersonIcon from "@mui/icons-material/Person";
 import Grid from "@mui/material/Grid";
 import { Customer } from "@/utils/types";
+import Link from "next/link";
 
 // an object customer of type Customer
 type props = {
@@ -28,7 +29,16 @@ const CustomerComponent = ({ customer }: props) => {
       </span>
 
       <p>{customer.industry}</p>
-      <Button variant="outlined">View Orders</Button>
+      <Link
+        href={{
+          pathname: "/orders",
+          query: {
+            customerID: customer._id?.toString(),
+          },
+        }}
+      >
+        <Button variant="outlined">View Orders</Button>
+      </Link>
     </Grid>
   );
 };

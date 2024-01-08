@@ -4,8 +4,12 @@ import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import Container from "@mui/material/Container";
 import { getCustomers } from "../api/customers";
 import { GetStaticProps, NextPage } from "next";
+import { useRouter } from "next/router";
 
 const columns: GridColDef[] = [
+  { field: "id", headerName: "orderID", width: 90 },
+  { field: "customerId", headerName: "Customer ID", width: 90 },
+
   {
     field: "customer",
     headerName: "Customer",
@@ -53,6 +57,7 @@ export const getStaticProps: GetStaticProps = async () => {
         orders.push({
           ...order,
           customer: customer.name,
+          customerId: customer._id,
           id: order._id,
           cost: Number(order.cost.$numberDecimal),
         });
@@ -79,23 +84,52 @@ export const getStaticProps: GetStaticProps = async () => {
 };
 
 const Orders: NextPage = (props: any) => {
-  console.log(props, "PROPPEEN");
+  // router.query.customerId
+  const { customerID } = useRouter().query;
+  console.log(customerID);
   return (
     <Container>
       <Box sx={{ height: 400, width: "100%" }}>
         <DataGrid
+          //when sure customerid is available apply filter
+          filterModel={{
+            items: [
+              {
+                field: "customerId",
+                operator: "equals",
+                value: customerID,
+              },
+            ],
+          }}
           rows={props.orders}
           columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 5,
-              },
-            },
-          }}
+          // initialState={{
+          //   pagination: {
+          //     paginationModel: {
+          //       pageSize: 5,
+          //     },
+          //   },
+          // }}
           pageSizeOptions={[5]}
           checkboxSelection
           disableRowSelectionOnClick
+          /*
+          automatically filter to all orders of customer when customer orders button clicked
+          use a hook to get the value of the id from the url
+          */
+          initialState={{
+            filter: {
+              filterModel: {
+                items: [
+                  {
+                    field: "customerId",
+                    operator: "equals",
+                    value: customerID,
+                  },
+                ],
+              },
+            },
+          }}
         />
       </Box>
     </Container>
