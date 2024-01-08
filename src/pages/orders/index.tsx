@@ -5,13 +5,15 @@ import Container from "@mui/material/Container";
 import { getCustomers } from "../api/customers";
 import { GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
+import { Customer, Order } from "@/utils/types";
+import { ObjectId } from "mongodb";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "orderID", width: 90 },
   { field: "customerId", headerName: "Customer ID", width: 90 },
 
   {
-    field: "customer",
+    field: "customerName",
     headerName: "Customer",
     width: 150,
     editable: true,
@@ -25,7 +27,7 @@ const columns: GridColDef[] = [
     editable: true,
   },
   {
-    field: "cost",
+    field: "orderCost",
     headerName: "Cost",
     type: "number",
     sortable: true,
@@ -33,33 +35,32 @@ const columns: GridColDef[] = [
   },
 ];
 
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 14 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 31 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 31 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 11 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
+//extending the Order Type
+interface OrderRow extends Order {
+  orderCost: Number;
+  customerName: string;
+  customerId?: ObjectId;
+  id: ObjectId;
+}
+
+type Props = {
+  orders: Order[];
+};
 
 export const getStaticProps: GetStaticProps = async () => {
   const data = await getCustomers();
 
-  let orders: any = [];
+  let orders: OrderRow[] = [];
 
-  data.forEach((customer) => {
+  data.forEach((customer: Customer) => {
     if (customer.orders) {
-      customer.orders.forEach((order: any) => {
-        console.log(order);
+      customer.orders.forEach((order: Order) => {
         orders.push({
           ...order,
-          customer: customer.name,
+          customerName: customer.name,
           customerId: customer._id,
           id: order._id,
-          cost: Number(order.cost.$numberDecimal),
+          orderCost: Number(order.cost.$numberDecimal),
         });
       });
     }
@@ -83,7 +84,7 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 };
 
-const Orders: NextPage = (props: any) => {
+const Orders: NextPage<Props> = (props) => {
   // router.query.customerId
   const { customerID } = useRouter().query;
   console.log(customerID);

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "../../../../lib/mongodb";
 import { ObjectId } from "mongodb";
-import { Customer } from "@/pages/customers";
+import { Customer } from "@/utils/types";
 
 export const getCustomer = async (id: string | ObjectId): Promise<Customer> => {
   //check the type of the id
@@ -68,6 +68,7 @@ export default async (
     const data = await editCustomer(id as string, {
       name: req.body.name,
       industry: req.body.industry,
+      orders: req.body.orders,
     });
 
     res.status(200).json({ modifiedCount: data.modifiedCount });

@@ -1,12 +1,12 @@
 import { NextPage, GetStaticProps, GetStaticPaths } from "next";
 import { useRouter } from "next/router";
-import { Customer } from ".";
 import axios, { AxiosError } from "axios";
 import { ParsedUrlQuery } from "querystring";
 import clientPromise from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 import { BSONTypeError } from "bson";
 import { getCustomer } from "../api/customers/[id]";
+import { Customer } from "@/utils/types";
 
 type Props = {
   customer?: Customer;
@@ -40,8 +40,6 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (
   // check if data found
   try {
     const data = await getCustomer(params.id);
-
-    console.log("$$$$$$$$$$$$$$$$$$$$$!!!!!!!!!!!!!!", data);
 
     if (!data) {
       return {
