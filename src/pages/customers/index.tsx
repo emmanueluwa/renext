@@ -54,7 +54,12 @@ const Customers: NextPage = ({
     <>
       <h1>Customers</h1>
       {customers.map((customer: Customer) => {
-        return <CustomerComponent customer={customer} />;
+        return (
+          <CustomerComponent
+            key={customer._id?.toString()}
+            customer={customer}
+          />
+        );
       })}
     </>
   );
