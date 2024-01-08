@@ -3,7 +3,8 @@ import Tooltip from "@mui/material/Tooltip";
 
 import Info from "@mui/icons-material/Info";
 import PersonIcon from "@mui/icons-material/Person";
-import { Customer } from "@/pages/customers";
+import Grid from "@mui/material/Grid";
+import { Customer } from "@/utils/types";
 
 // an object customer of type Customer
 type props = {
@@ -12,7 +13,7 @@ type props = {
 
 const CustomerComponent = ({ customer }: props) => {
   return (
-    <div style={{ marginBottom: 40 }}>
+    <Grid>
       <span
         style={{
           display: "flex",
@@ -28,7 +29,7 @@ const CustomerComponent = ({ customer }: props) => {
 
       <p>{customer.industry}</p>
       <Button variant="outlined">View Orders</Button>
-    </div>
+    </Grid>
   );
 };
 
